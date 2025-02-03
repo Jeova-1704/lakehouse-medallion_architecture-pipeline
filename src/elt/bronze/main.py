@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 from os import getenv
-import pandas as pd
 from supabase import create_client
 import math
 
@@ -91,9 +90,9 @@ def main():
     print("Dados do pedido extraídos com sucesso")
     print(f"Quantidade de registros: {len(data_pedido)}")
     
-    response_cliente = load.insert_to_lakehouse(data_cliente, "clientes")
-    response_produto = load.insert_to_lakehouse(data_produto, "produtos")
-    response_pedido = load.insert_to_lakehouse(data_pedido, "pedidos")
+    load.insert_to_lakehouse(data_cliente, "clientes")
+    load.insert_to_lakehouse(data_produto, "produtos")
+    load.insert_to_lakehouse(data_pedido, "pedidos")
     
     print(len(data_cliente))
     

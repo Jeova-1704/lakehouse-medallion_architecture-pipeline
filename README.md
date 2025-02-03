@@ -98,6 +98,6 @@ quantidade de dados permitida para envio para o schema bronze: 10_000 registros 
 Agora que temos os esquemas bronze, silver e gold criados, vamos extrair os dados do Supabase e carregá-los no schema bronze.
 vamos executar o código de extração dos dados para o schema bronze.
 ```python
-python .\src\extract\extract.py
+python .\src\elt\bronze\main.py
 ```
 
