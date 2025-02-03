@@ -67,3 +67,37 @@ CREATE TABLE bronze.pedidos (
     row_version INT DEFAULT 1  -- Controle de versão do registro (caso haja alterações futuras)
 );
 ```
+
+Dentro do supabase vamos dar para o nosso schema bronze a permissão de leitura e escrita para o público, para que possamos acessar os dados de fora do supabase.
+```sql	
+-- Conceder permissões de uso no schema bronze
+GRANT USAGE ON SCHEMA bronze TO anon;
+
+-- Conceder permissões de leitura, inserção, atualização e exclusão para a tabela clientes
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bronze.clientes TO anon;
+
+-- Conceder permissões de leitura, inserção, atualização e exclusão para a tabela produtos
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bronze.produtos TO anon;
+
+-- Conceder permissões de leitura, inserção, atualização e exclusão para a tabela pedidos
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bronze.pedidos TO anon;
+```
+
+E agora vamos configurar a exposição do nosso schema bronze para permitir interação via API:
+![Imagem de acesso ao subapase](images-readme/imag)
+Logo após vamos salvar as alterações e vamos executar o código de extração dos dados para o schema bronze.
+
+OBS: Lembrar que para o processo de extrassão devemos verificar a quantidade permitida de dados que podem ser extraídos por requisição, para a nossa logica não ter problemas. Tanto para a extração dos dados quanto para a inserção dos dados no schema bronze.
+
+Para isso eu liberei a quantidade de dados permitida para 200_000 registros por requisição. Porém, para a inserção dos dados no schema bronze, eu liberei a quantidade de dados permitida para 10_000 registros por requisição. E para conseguir enviar todos os dados vamos fazer um sistma em batch para enviar os dados em partes.
+
+quantidade de dados permitida para envio para o schema bronze: 10_000 registros por requisição.
+![alt text](images-readme/{170A5D3A-B50F-49F7-BC09-D43B159DBB83}.png)
+
+2️⃣ Extração dos Dados para o Schema Bronze
+Agora que temos os esquemas bronze, silver e gold criados, vamos extrair os dados do Supabase e carregá-los no schema bronze.
+vamos executar o código de extração dos dados para o schema bronze.
+```python
+python .\src\extract\extract.py
+```
+
