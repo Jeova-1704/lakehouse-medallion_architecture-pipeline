@@ -100,4 +100,7 @@ def main():
     
     extract.close_connection()
     load.close_connection()
-    
+
+
+if __name__ == "__main__":
+    main()

@@ -101,3 +101,54 @@ vamos executar o código de extração dos dados para o schema bronze.
 python .\src\elt\bronze\main.py
 ```
 
+3️⃣ Carregando os Dados no Schema Silver
+Agora  vamos inicialmente criar as tabelas no schema silver para realizar a limpeza e transformação dos dados:
+```sql
+CREATE TABLE silver.clientes (
+    id_cliente TEXT PRIMARY KEY,
+    nome TEXT,
+    email TEXT,
+    telefone TEXT,
+    cidade TEXT,
+    idade INT,
+    data_ingestao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE silver.produtos (
+    id_produto TEXT PRIMARY KEY,
+    nome_produto TEXT,
+    categoria TEXT,
+    preco NUMERIC,
+    estoque INT,
+    data_ingestao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE silver.pedidos (
+    id_pedido TEXT PRIMARY KEY,
+    id_cliente TEXT REFERENCES silver.clientes(id_cliente),
+    id_produto TEXT REFERENCES silver.produtos(id_produto),
+    quantidade INT,
+    status TEXT,
+    valor_total NUMERIC,
+    data_pedido DATE,
+    data_ingestao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+Agora vamos dar as permissões para o schema silver:
+```sql
+GRANT USAGE ON SCHEMA silver TO anon;
+
+-- Conceder permissões de leitura, inserção, atualização e exclusão para a tabela clientes
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE silver.clientes TO anon;
+
+-- Conceder permissões de leitura, inserção, atualização e exclusão para a tabela produtos
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE silver.produtos TO anon;
+
+-- Conceder permissões de leitura, inserção, atualização e exclusão para a tabela pedidos
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE silver.pedidos TO anon;
+```
+
+Agora vamos executar o código de limpeza e transformação dos dados e carregar no schema silver:
+```python
+
