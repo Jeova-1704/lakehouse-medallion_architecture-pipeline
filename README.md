@@ -89,7 +89,7 @@ Logo após vamos salvar as alterações e vamos executar o código de extração
 
 OBS: Lembrar que para o processo de extrassão devemos verificar a quantidade permitida de dados que podem ser extraídos por requisição, para a nossa logica não ter problemas. Tanto para a extração dos dados quanto para a inserção dos dados no schema bronze.
 
-Para isso eu liberei a quantidade de dados permitida para 200_000 registros por requisição. Porém, para a inserção dos dados no schema bronze, eu liberei a quantidade de dados permitida para 10_000 registros por requisição. E para conseguir enviar todos os dados vamos fazer um sistma em batch para enviar os dados em partes.
+Para isso eu liberei a quantidade de dados permitida para 100_000 registros por requisição. Porém, para a inserção dos dados no schema bronze, eu liberei a quantidade de dados permitida para 10_000 registros por requisição. E para conseguir enviar todos os dados vamos fazer um sistma em batch para enviar os dados em partes.
 
 quantidade de dados permitida para envio para o schema bronze: 10_000 registros por requisição.
 ![alt text](images-readme/{170A5D3A-B50F-49F7-BC09-D43B159DBB83}.png)
