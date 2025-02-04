@@ -10,8 +10,14 @@ def run_elt_schema_silver():
     subprocess.run(["python", "src/elt/silver/main.py"])
     print("Processo de transformação de dados e carga na camada silver finalizado.")
     
+def run_elt_schema_gold():
+    print("Iniciando processo de transformação de dados e carga na camada gold.")
+    subprocess.run(["python", "src/elt/gold/main.py"])
+    print("Processo de transformação de dados e carga na camada gold finalizado.")
+    
 
 if __name__ == "__main__":
     run_elt_schema_bronze()
     run_elt_schema_silver()
+    run_elt_schema_gold()
     

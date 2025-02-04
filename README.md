@@ -151,4 +151,65 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE silver.pedidos TO anon;
 
 Agora vamos executar o código de limpeza e transformação dos dados e carregar no schema silver:
 ```python
+python .\src\elt\silver\main.py
+```
+
+4️⃣ Carregando os Dados no Schema Gold
+As análises de clientes e pedidos vão ser combinadas, mas a análise de produtos vai ser separada.
+Vamos estruturar da seguinte forma, com 2 tabelas no schema gold:
+1. gold.analise_clientes_pedidos -> Consolidando as informações de clientes e pedidos em uma única tabela
+2. gold.analise_produtos -> Tabela separada para análise de produtos
+
+1. Agora vamos criar a tabela gold.analise_clientes_pedidos:
+```sql
+CREATE TABLE gold.analise_clientes_pedidos (
+    id_cliente TEXT PRIMARY KEY,
+    nome TEXT,
+    cidade TEXT,
+    idade INT,
+    total_pedidos INT,
+    total_gasto NUMERIC,
+    data_primeiro_pedido DATE,
+    data_ultimo_pedido DATE,
+    categorias_compradas TEXT, -- Lista de categorias
+    produtos_comprados TEXT -- Lista de produtos
+);
+```
+- total_gasto → Soma do valor total do pedido (igual ao pedido, pois cada cliente tem um único pedido).
+- status_pedido → Status do pedido (Pago, Cancelado, etc.).
+- data_pedido → Data da compra.
+- categoria_produto → Categoria do produto comprado.
+- nome_produto → Nome do produto comprado.
+
+2. Agora vamos criar a tabela gold.analise_produtos:
+```sql
+CREATE TABLE gold.analise_produtos (
+    id_produto TEXT PRIMARY KEY,
+    nome_produto TEXT,
+    categoria TEXT,
+    total_vendido INT,
+    total_receita NUMERIC,
+    estoque_atual INT
+);
+```
+- total_vendido → Soma das quantidades vendidas de cada produto.
+- total_receita → Soma do valor total gerado por esse produto.
+- estoque_atual → Estoque restante do produto.
+
+
+Agora vamos dar as permissões para o schema gold:
+```sql
+GRANT USAGE ON SCHEMA gold TO anon;
+
+-- Conceder permissões de leitura, inserção, atualização e exclusão para a tabela clientes
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE gold.analise_clientes_pedidos TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE gold.analise_produtos TO anon;
+```
+
+Agora vamos executar o código de agregação dos dados e carregar no schema gold:
+```python
+python .\src\elt\gold\main.py
+```
+
+5️⃣ Criando o Dashboard
 
