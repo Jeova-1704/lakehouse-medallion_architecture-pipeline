@@ -243,6 +243,6 @@ Este projeto implementa um Lakehouse gratuito usando Supabase e Arquitetura Meda
 ✅ Finalizamos a Arquitetura Medalhão com sucesso! 🎉
 🚀 Agora podemos avançar para novos desafios:
 
-1️⃣ Criar um Pipeline de Dados Automatizado com Prefect.
+1️⃣ Criar um Pipeline de Dados.
 2️⃣ Criar um Dashboard para análise dos dados.
 3️⃣ Criar uma API para disponibilizar os dados.
