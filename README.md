@@ -229,18 +229,17 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE gold.analise_produtos TO anon;
 Para permitir interação externa e acesso via API aos schemas, é necessário configurar corretamente as permissões no Supabase.
 
 1️⃣ Acesse o painel do Supabase e vá até as configurações de política de acesso.
-2️⃣ Habilite o acesso às tabelas do schema Bronze para usuários anônimos e autenticados.
+2️⃣ Habilite o acesso às tabelas dos schemas Bronze, silver e gold para usuários anônimos e autenticados.
 3️⃣ Garanta que as permissões de leitura e escrita estejam corretas.
 
 #### 📌 Exemplo de configuração no Supabase:
-![Imagem de acesso ao subapase](images-readme/imag)
 Antes de iniciar a extração e carga dos dados, é essencial verificar as limitações de requisição do Supabase para garantir que o processamento seja eficiente.
 
 #### 📌 Limites definidos para requisições:
 - Extração de dados: Limitada a 100.000 registros por requisição.
 - Inserção de dados: Limitada a 10.000 registros por requisição.
 🔹 Implementação do Batch Processing
-Para garantir que todos os dados sejam inseridos corretamente no schema Bronze, utilizamos um sistema de processamento em lote (batch processing). Esse sistema divide os dados em pequenos blocos de 10.000 registros por requisição, otimizando a performance e evitando erros de timeout.
+Para garantir que todos os dados sejam inseridos corretamente no schema Bronze, silver e gold, utilizamos um sistema de processamento em lote (batch processing). Esse sistema divide os dados em pequenos blocos de 10.000 registros por requisição, otimizando a performance e evitando erros de timeout.
 ![alt text](images-readme/{170A5D3A-B50F-49F7-BC09-D43B159DBB83}.png)
 
 
