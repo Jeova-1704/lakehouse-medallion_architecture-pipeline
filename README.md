@@ -7,6 +7,38 @@ Este projeto implementa um Data Lakehouse utilizando o Supabase como banco de da
 
 obs: Essa arquitetura é uma representação simplificada do fluxo de dados. A arquitetura final do projeto ainda está em desenvolvimento a medida que novas funcionalidades são implementadas no projeto.
 
+## Conceitos importantes
+
+### 📌 Data Lakehouse
+Um Data Lakehouse é uma arquitetura híbrida que combina as melhores características de Data Lakes e Data Warehouses. Ele permite armazenar grandes volumes de dados brutos (como um Data Lake) enquanto oferece governança, qualidade e desempenho para consultas analíticas (como um Data Warehouse).
+#### Principais Características:
+- Armazena dados estruturados e não estruturados em um único local.
+- Suporta processamento de grandes volumes de dados com baixo custo.
+- Permite consultas rápidas e eficientes usando SQL e ferramentas analíticas.
+- Possui governança e controle de acesso, garantindo segurança e qualidade dos dados.
+- Facilita Machine Learning e Análises Avançadas, pois mantém dados históricos em diferentes estágios de processamento (Bronze, Silver, Gold na Arquitetura Medalhão).
+
+### 📌 Arquitetura Medalhão (Bronze, Silver, Gold)
+A Arquitetura Medalhão é um modelo de organização de dados dentro de um Data Lakehouse, estruturado em três camadas: Bronze, Silver e Gold. Cada camada representa um nível de processamento e qualidade dos dados.
+
+#### 📂 Bronze
+- Dados brutos extraídos de fontes externas.
+- Sem limpeza ou transformação.
+- Armazenamento de dados em seu formato original.
+- Ideal para armazenar dados históricos e brutos para auditoria e rastreabilidade.
+
+#### 📂 Silver
+- Dados limpos e transformados.
+- Estruturados em tabelas relacionais
+- Ideal para análises e consultas rápidas.
+- Armazenamento de dados prontos para análises e relatórios.
+
+#### 📂 Gold
+- Dados agregados e prontos para análises avançadas.
+- Estruturados em tabelas analíticas.
+- Ideal para Machine Learning, Business Intelligence e Análises Avançadas.
+- Armazenamento de dados prontos para insights e tomada de decisão.
+
 ### 📌 Tecnologias e conceitos utilizados
 - [Python](https://www.python.org/)
 - [Pandas](https://pandas.pydata.org/)
