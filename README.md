@@ -1,8 +1,8 @@
-pandas, lakehouse, supabase, dashboard, disponibilizar os dados em uma api, arquitetura medalhão(bronze, silver, gold), pipeline Prefect
+pandas, lakehouse, supabase, arquitetura medalhão(bronze, silver, gold), pipeline Prefect
 
-Vamos criar um projeto de ponta a ponta, desde a extração dos dados até a disponibilização de um dashboard e uma API para acessar os dados. Vamos usar o pandas para extrair os dados do supabase e subir em nosso data lakehouse (vou suar o supabase para simular pois é uma opção gratuita), vamos usar a arquitetura medalhão(bronze, silver, gold) e o Prefect para criar um pipeline de dados.
+Vamos criar um projeto de ponta a ponta, desde a extração dos dados  até o elt no lakehouse. Vamos usar o pandas para extrair os dados do supabase e subir em nosso data lakehouse (vou suar o supabase para simular pois é uma opção gratuita), vamos usar a arquitetura medalhão(bronze, silver, gold) e o Prefect para criar um pipeline de dados.
 
-Os dados que vamos usar já estão disponíveis no supabase, são dados de uma loja fictícia que vende produtos e tem clientese e pedidos. Vamos fazer a extração, carregar em nosso data lakehouse, limpar e transformar os dados, criar um dashboard para visualização e disponibilizar os dados em uma API.
+Os dados que vamos usar já estão disponíveis no supabase, são dados de uma loja fictícia que vende produtos e tem clientese e pedidos. Vamos fazer a extração, carregar em nosso data lakehouse, limpar e transformar os dados, e subir em uma camada de dados pronta para análise, que é a camada gold.
 
 vamos começar criando a arquitetura medalhão no supabase.
 
@@ -210,6 +210,4 @@ Agora vamos executar o código de agregação dos dados e carregar no schema gol
 ```python
 python .\src\elt\gold\main.py
 ```
-
-5️⃣ Criando o Dashboard
 
