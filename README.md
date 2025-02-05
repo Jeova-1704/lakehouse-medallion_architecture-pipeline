@@ -1,6 +1,11 @@
 # 🏗️ Arquitetura Medalhão (Bronze, Silver, Gold) e Data Lakehouse
 Este projeto implementa um Data Lakehouse utilizando o Supabase como banco de dados para simular um ambiente de armazenamento e processamento de dados. O fluxo de dados segue a Arquitetura Medalhão (Bronze, Silver, Gold), garantindo qualidade, organização e eficiência no processamento dos dados.
 
+## Arquitetrua/Fluxo de Dados até o momento 
+
+![Arquitetura do projeto](images-readme/{AC48F041-C5B7-480D-BE44-3FFFCEAB4639}.png)
+
+obs: Essa arquitetura é uma representação simplificada do fluxo de dados. A arquitetura final do projeto ainda está em desenvolvimento a medida que novas funcionalidades são implementadas no projeto.
 
 ### 📌 Tecnologias e conceitos utilizados
 - [Python](https://www.python.org/)
