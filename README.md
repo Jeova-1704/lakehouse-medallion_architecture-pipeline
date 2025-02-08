@@ -26,6 +26,7 @@ A Arquitetura Medalhão é um modelo de organização de dados dentro de um Data
 - Sem limpeza ou transformação.
 - Armazenamento de dados em seu formato original.
 - Ideal para armazenar dados históricos e brutos para auditoria e rastreabilidade.
+- Normalmente armazenados em arquivos (CSV, JSON, Parquet) em backends de armazenamento (S3, Blob Storage, Data Lake).
 
 #### 📂 Silver
 - Dados limpos e transformados.
@@ -81,7 +82,6 @@ No Supabase, organizamos os dados em três esquemas:
 execute o código SQL no SQL Editor do Supabase para criar os esquemas:
 ```sql
 -- Criar os esquemas para a arquitetura medalhão
-CREATE SCHEMA bronze;
 CREATE SCHEMA silver;
 CREATE SCHEMA gold;
 ```
@@ -89,53 +89,45 @@ CREATE SCHEMA gold;
 ## 📌 2️⃣ Criando a Camada Bronze
 
 #### 📂 Esquema bronze
+Para a camada Bronze, vamos criar um bucket no Supabase para armazenar os dados brutos extraídos. O bucket é um local de armazenamento de arquivos (CSV, JSON, Parquet) que pode ser acessado por APIs e ferramentas de análise.
+Para criar um bucket no Supabase, siga as etapas abaixo:
+###### Passo a Passo para Criar um Bucket no Supabase:
+1. Acesse a página do Supabase e faça login na sua conta.
+2. Acesse o seu projeto no Supabase.
+3. Acesse a opção "Storage" no menu lateral.
+4. Clique no botão "New Bucket" para criar um novo bucket.
+5. Preencha o nome do seu bucket e clique em "Create Bucket". Nome proposto: "bronze-bucket".
+6. Agora você tem um bucket para armazenar os dados brutos extraídos.
+Agora vamos dar as permissões para o schema bronze. Acesse o SQL Editor do Supabase e execute o código abaixo:
 ```sql
-CREATE SEQUENCE process_id_seq START 1;
+-- Enable row-level security
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 
-CREATE TABLE bronze.clientes (
-    id_cliente TEXT PRIMARY KEY,
-    nome TEXT,
-    email TEXT,
-    telefone TEXT,
-    cidade TEXT,
-    idade TEXT,
-    load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-    process_id TEXT DEFAULT 'abc' || nextval('process_id_seq')::TEXT
-    row_version INT DEFAULT 1 
-);
+-- Policy for SELECT operations
+CREATE POLICY objects_select_policy ON storage.objects FOR SELECT
+  USING (auth.role() = 'authenticated');
 
-CREATE TABLE bronze.produtos (
-    id_produto TEXT PRIMARY KEY,
-    nome_produto TEXT,
-    categoria TEXT,
-    preco TEXT,
-    estoque TEXT,
-    load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-    process_id TEXT DEFAULT 'abc' || nextval('process_id_seq')::TEXT
-    row_version INT DEFAULT 1 
-);
+-- Policy for INSERT operations WITH CHECK !
+CREATE POLICY objects_insert_policy ON storage.objects FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');
 
-CREATE TABLE bronze.pedidos (
-    id_pedido TEXT PRIMARY KEY,
-    id_cliente TEXT REFERENCES bronze.clientes(id_cliente),
-    id_produto TEXT REFERENCES bronze.produtos(id_produto),
-    quantidade TEXT,
-    status TEXT,
-    valor_total TEXT,
-    data_pedido TEXT,
-    load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-    process_id TEXT DEFAULT 'abc' || nextval('process_id_seq')::TEXT
-    row_version INT DEFAULT 1 
-);
+-- Policy for UPDATE operations
+CREATE POLICY objects_update_policy ON storage.objects FOR UPDATE
+  USING (auth.role() = 'authenticated');
+
+-- Policy for DELETE operations
+CREATE POLICY objects_delete_policy ON storage.objects FOR DELETE
+  USING (auth.role() = 'authenticated');
+
+
+CREATE POLICY "Acesso Total"
+ON storage.objects
+FOR ALL
+USING (true);
 ```
-Agora vamos dar as permissões para o schema bronze:
-```sql	
-GRANT USAGE ON SCHEMA bronze TO anon;
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bronze.clientes TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bronze.produtos TO anon;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bronze.pedidos TO anon;
-```
+Com isso já temos o esquema bronze criado e configurado no Supabase. Agora podemos iniciar a extração dos dados brutos.
+
 
 ## 📌 3️⃣ Criando a Camada Silver (Transformação)
 Agora aplicamos limpeza e transformação nos dados.

@@ -1,7 +1,9 @@
 from dotenv import load_dotenv
-from os import getenv
+from os import getenv, path, remove, makedirs
 from supabase import create_client
 import math
+import pandas as pd 
+from datetime import datetime
 
 class Extract:
     def __init__(self):
@@ -12,6 +14,8 @@ class Extract:
         self.batch_size = 10_000
         
     def get_data(self, table_name):
+        # response = self.client.schema("public").table(table_name).select("*").limit(10).execute()
+        # return response.data
         all_data = []
         offset = 0
         
@@ -46,36 +50,55 @@ class LoadToLakehouse():
         self.url = getenv("LAKEHOUSE_URL")
         self.key = getenv("LAKEHOUSE_KEY")
         self.client = create_client(self.url, self.key)
+        self.bucket_name = getenv("BUCKET_NAME")
         self.batch_size = 10_000
 
     def close_connection(self):
         self.client = None
-
-    def insert_to_lakehouse(self, data, table_name):
-        total_rows = len(data)
         
-        if total_rows == 0:
-            print(f"Não há dados para inserir na tabela {table_name}")
+    def insert_to_bucket_storage(self, data, package_name):
+        temp = "./temp"
+        
+        if not path.exists(temp):
+            makedirs(temp)
+        
+        
+        if not data:
+            print("Não há dados para inserir no bucket.")
             return
         
-        total_batches = math.ceil(total_rows / self.batch_size)
+        df = pd.DataFrame(data)
         
-        print(f"Inserindo dados na tabela {table_name}, um total de {total_rows} registros serão inseridos em {total_batches} lotes.")
+        now = datetime.now()
+        timestamp = now.strftime("%Y%m%d_%H%M%S")
+        ano = now.strftime("%Y")
+        mes = now.strftime("%m")
         
-        for i in range(0, total_rows, self.batch_size):
-            batch_data = data[i:i + self.batch_size]
+        filename = f"{package_name}_{timestamp}.parquet"
+        bucket_path = f"{ano}/{mes}/{filename}"
+        
+        temp_file_path = f"{temp}/{filename}"
+        
+        try:
+            df.to_parquet(temp_file_path, index=False)
             
-            try:
-                self.client.schema("bronze").table(table_name).insert(batch_data).execute()
-                print(f"Inserindo dados na tabela {table_name} - {i + len(batch_data)} registros inseridos.")
-            except Exception as e:
-                print(f"Erro ao inserir dados na tabela {table_name}")
-                print(e)
-                break
+            with open(temp_file_path, "rb") as file:
+                response = self.client.storage.from_(self.bucket_name).upload(
+                    file=file,
+                    path=bucket_path,
+                )
             
-        print(f"Sucesso ao inserir os dados na tabela: {table_name}")
-     
-
+            print(f"Arquivo {filename} inserido no bucket com sucesso.")
+        
+        except Exception as e:
+            print(f"Erro ao inserir dados no bucket.")
+            print(e)
+        
+        finally:
+            if path.exists(temp_file_path):
+                remove(temp_file_path)
+        
+        
 def main():
     extract = Extract()
     load = LoadToLakehouse()
@@ -83,23 +106,23 @@ def main():
     data_cliente = extract.get_data("clientes")
     print("Dados do cliente extraídos com sucesso")
     print(f"Quantidade de registros: {len(data_cliente)}")
+    
     data_produto = extract.get_data("produtos") 
     print("Dados do produto extraídos com sucesso")
     print(f"Quantidade de registros: {len(data_produto)}")
+    
     data_pedido = extract.get_data("pedidos")
     print("Dados do pedido extraídos com sucesso")
     print(f"Quantidade de registros: {len(data_pedido)}")
-    
-    load.insert_to_lakehouse(data_cliente, "clientes")
-    load.insert_to_lakehouse(data_produto, "produtos")
-    load.insert_to_lakehouse(data_pedido, "pedidos")
-    
-    print(len(data_cliente))
-    
-    print("Data inserted successfully")
+
+    load.insert_to_bucket_storage(data_cliente, "clientes")
+    load.insert_to_bucket_storage(data_produto, "produtos")
+    load.insert_to_bucket_storage(data_pedido, "pedidos")
     
     extract.close_connection()
     load.close_connection()
+    
+    print("Processo finalizado.")
 
 
 if __name__ == "__main__":
