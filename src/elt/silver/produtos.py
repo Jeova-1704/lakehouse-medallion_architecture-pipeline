@@ -24,7 +24,6 @@ def transform_produtos(df):
     print("Checando os valores nulos")
     null_check(df)
 
-
     print("=====================================")
     print("Checando os valores nulos após a remoção")
     null_check(df)
@@ -40,7 +39,6 @@ def transform_produtos(df):
     print("=====================================")
     print("Renomeando colunas")
     df = rename_columns(df)
-    
 
     print("=====================================")
     print("Transformação de clientes concluída!")
