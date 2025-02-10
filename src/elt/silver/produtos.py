@@ -14,9 +14,11 @@ def null_check(df):
     print(null_values)
     return null_values
 
+def rename_columns(df):
+    df = df.rename(columns={"id_produto": "id"})
+    return df
 
-def transform_produtos(path_parquet):
-    df = pd.read_parquet(path_parquet)
+def transform_produtos(df):
     
     print("=====================================")
     print("Checando os valores nulos")
@@ -34,6 +36,11 @@ def transform_produtos(path_parquet):
     print("=====================================")
     print("Convertendo idade para inteiro")
     df = transform_data_type_produtos(df)
+    
+    print("=====================================")
+    print("Renomeando colunas")
+    df = rename_columns(df)
+    
 
     print("=====================================")
     print("Transformação de clientes concluída!")
