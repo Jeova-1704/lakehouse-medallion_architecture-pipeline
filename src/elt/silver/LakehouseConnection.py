@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from os import getenv, path, remove
 from supabase import create_client
 import math
+import pandas as pd
 
 class LakehouseConnection():
     def __init__(self):
@@ -82,3 +83,32 @@ class LakehouseConnection():
                 break
             
         print(f"Sucesso ao inserir os dados na tabela: {table_name}")
+    
+    def get_data_from_lakehouse(self, table_name, schema):
+        # response = self.client.schema(schema).table(table_name).select("*").limit(100).execute()
+        # return pd.DataFrame(response.data)
+    
+        all_data = []
+        offset = 0
+        
+        while True:
+            try:
+                response = self.client.schema(schema).table(table_name).select("*").range(offset, offset + self.batch_size - 1).execute()
+                batch_data = response.data
+                
+                if not batch_data:
+                    break
+                
+                all_data.extend(batch_data)
+                offset += self.batch_size
+                
+                print(f"Extraindo dados da tabela {table_name} - {offset} registros extraídos.")
+                
+            except Exception as e:
+                print(f"Erro ao extrair dados da tabela {table_name}")
+                print(e)
+                break
+            
+        print(f"Extração de dados da tabela {table_name} finalizada.")
+        df = pd.DataFrame(all_data)
+        return df
