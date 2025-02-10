@@ -134,7 +134,7 @@ Agora aplicamos limpeza e transformação nos dados.
 
 ```sql
 CREATE TABLE silver.clientes (
-    id_cliente TEXT PRIMARY KEY,
+    id TEXT PRIMARY KEY,
     nome TEXT,
     email TEXT,
     telefone TEXT,
@@ -144,7 +144,7 @@ CREATE TABLE silver.clientes (
 );
 
 CREATE TABLE silver.produtos (
-    id_produto TEXT PRIMARY KEY,
+    id TEXT PRIMARY KEY,
     nome_produto TEXT,
     categoria TEXT,
     preco NUMERIC,
@@ -153,9 +153,9 @@ CREATE TABLE silver.produtos (
 );
 
 CREATE TABLE silver.pedidos (
-    id_pedido TEXT PRIMARY KEY,
-    id_cliente TEXT REFERENCES silver.clientes(id_cliente),
-    id_produto TEXT REFERENCES silver.produtos(id_produto),
+    id TEXT PRIMARY KEY,
+    id_cliente TEXT REFERENCES silver.clientes(id)
+    id_produto TEXT REFERENCES silver.produtos(id),
     quantidade INT,
     status TEXT,
     valor_total NUMERIC,
