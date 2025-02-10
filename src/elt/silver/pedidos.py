@@ -13,21 +13,15 @@ def transform_data_type_pedidos(df):
     df.loc[:, "data_pedido"] = pd.to_datetime(df["data_pedido"], errors="coerce").dt.strftime("%Y-%m-%d")
     
     return df
-
-
-def drop_columns(df):
-    df.drop(columns=['load_timestamp', 'process_id', 'row_version'], inplace=True)
-    return df
     
-
 def null_check(df): 
     null_values = df.isnull().sum()
     print(null_values)
     return null_values
 
 
-def transform_pedidos(data):
-    df = pd.DataFrame(data)
+def transform_pedidos(path_parquet):
+    df = pd.read_parquet(path_parquet)
     
     print("=====================================")
     print("Checando os valores nulos")
@@ -45,10 +39,6 @@ def transform_pedidos(data):
     print("=====================================")
     print("Convertendo idade para inteiro")
     df = transform_data_type_pedidos(df)
-
-    print("=====================================")
-    print("Removendo colunas desnecessárias")
-    df = drop_columns(df)
 
     print("=====================================")
     print("Transformação de clientes concluída!")

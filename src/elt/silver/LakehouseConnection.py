@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from os import getenv
+from os import getenv, path, remove
 from supabase import create_client
 import math
 
@@ -9,36 +9,56 @@ class LakehouseConnection():
         self.url = getenv("LAKEHOUSE_URL")
         self.key = getenv("LAKEHOUSE_KEY")
         self.client = create_client(self.url, self.key)
+        self.bucket = getenv("BUCKET_NAME")
+        self.temp = "./temp"
         self.batch_size = 10_000
+        
+    def clear_temp(self, *args):
+        for file in args:
+            if path.exists(file):
+                remove(file)
 
     def close_connection(self):
         self.client = None
+    
+    def get_data_from_bucket(self, file_name):      
+        paths = []
+        sub_paths = []
         
-    def get_data_from_lakehouse(self, table_name, schema):
-        all_data = []
-        offset = 0
+        response_paths = self.client.storage.from_(self.bucket).list()
         
-        while True:
-            try:
-                response = self.client.schema(schema).table(table_name).select("*").range(offset, offset + self.batch_size - 1).execute()
-                batch_data = response.data
-                
-                if not batch_data:
-                    break
-                
-                all_data.extend(batch_data)
-                offset += self.batch_size
-                
-                print(f"Extraindo dados da tabela {table_name} - {offset} registros extraídos.")
-                
-            except Exception as e:
-                print(f"Erro ao extrair dados da tabela {table_name}")
-                print(e)
-                break
+        for file in response_paths:
+            if file["name"] == ".emptyFolderPlaceholder":
+                continue
+            paths.append(file["name"])
+        
+        response_sub_paths = self.client.storage.from_(self.bucket).list(path=paths[0])
+        
+        for file in response_sub_paths:
+            sub_paths.append(file["name"])
+        
+        recent_path = self.__get_path_recent(paths)
+        recent_sub_path = self.__get_path_recent(sub_paths)
+        
+        file_path_bucket = f"{recent_path}/{recent_sub_path}/{file_name}.parquet"
+        temp_path = f"{self.temp}/{file_name}.parquet"
             
-        print(f"Extração de dados da tabela {table_name} finalizada.")
-        return all_data
-
+        with open(temp_path, "wb+") as f:
+            response = self.client.storage.from_(self.bucket).download(file_path_bucket)
+            f.write(response)
+            
+        return temp_path
+        
+    def __get_path_recent(self, paths):
+        path_recent = paths[0]
+        
+        for path in paths:
+            if int(path) > int(path_recent):
+                path_recent = path
+                
+        return path_recent
+        
+        
     def insert_data_to_lakehouse(self, df, table_name, schema):
         total_rows = df.shape[0]
         

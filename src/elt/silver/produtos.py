@@ -8,21 +8,15 @@ def transform_data_type_produtos(df):
     df['preco'] = df['preco'].astype(float)
     df['estoque'] = df['estoque'].astype(int)
     return df
-
-
-def drop_columns(df):
-    df.drop(columns=['load_timestamp', 'process_id', 'row_version'], inplace=True)
-    return df
     
-
 def null_check(df): 
     null_values = df.isnull().sum()
     print(null_values)
     return null_values
 
 
-def transform_produtos(data):
-    df = pd.DataFrame(data)
+def transform_produtos(path_parquet):
+    df = pd.read_parquet(path_parquet)
     
     print("=====================================")
     print("Checando os valores nulos")
@@ -40,10 +34,6 @@ def transform_produtos(data):
     print("=====================================")
     print("Convertendo idade para inteiro")
     df = transform_data_type_produtos(df)
-
-    print("=====================================")
-    print("Removendo colunas desnecessárias")
-    df = drop_columns(df)
 
     print("=====================================")
     print("Transformação de clientes concluída!")
