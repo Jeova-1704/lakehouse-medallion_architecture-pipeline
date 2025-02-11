@@ -58,9 +58,5 @@ class LakehouseConnection():
             # try:
             self.client.schema(schema).table(table_name).insert(batch_data).execute()
             print(f"Inserindo dados na tabela {table_name} - {i + len(batch_data)} registros inseridos.")
-            # except Exception as e:
-            #     print(f"Erro ao inserir dados na tabela {table_name}")
-            #     print(e)
-            #     break
             
         print(f"Sucesso ao inserir os dados na tabela: {table_name}")
