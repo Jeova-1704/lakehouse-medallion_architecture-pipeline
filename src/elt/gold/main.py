@@ -2,6 +2,10 @@ from LakehouseConnection import LakehouseConnection
 
 
 def create_table_analise_clientes_pedido(df_clientes, df_pedidos, df_produtos):
+    df_clientes = df_clientes.rename(columns={"id": "id_cliente"})
+    df_pedidos = df_pedidos.rename(columns={"id": "id_pedido"})
+    df_produtos = df_produtos.rename(columns={"id": "id_produto"})
+    
     df_pedidos = df_pedidos.merge(df_produtos[["id_produto", "nome_produto", "categoria"]], on="id_produto", how="left")
     df_agrupado = df_pedidos.groupby("id_cliente").agg(
         total_pedidos=("id_pedido", "count"),
@@ -19,8 +23,10 @@ def create_table_analise_clientes_pedido(df_clientes, df_pedidos, df_produtos):
     return df_final
 
 
-
 def create_analise_produtos(df_pedidos, df_produtos):
+    df_pedidos = df_pedidos.rename(columns={"id": "id_pedido"})
+    df_produtos = df_produtos.rename(columns={"id": "id_produto"})
+    
     df = df_pedidos.groupby("id_produto").agg(
         total_vendido=("quantidade", "sum"),
         total_receita=("valor_total", "sum")
@@ -33,6 +39,22 @@ def create_analise_produtos(df_pedidos, df_produtos):
     return df
 
 
+def remove_duplicates_cliente_pedido(df, df_gold, column_name):
+    df = df.drop_duplicates(subset=[column_name])
+    
+    if df_gold.empty:
+        print(f"A camada Gold está vazia. Inserindo todos os {len(df)} registros.")
+        return df
+    
+    df[column_name] = df[column_name].astype(str)
+    df_gold[column_name] = df_gold[column_name].astype(str)
+    
+    df_final = df[~df[column_name].isin(df_gold[column_name])]
+    
+    return df_final
+    
+
+
 def app():
     lakehouse = LakehouseConnection()
     data_clientes = lakehouse.get_data_from_lakehouse("clientes", "silver")
@@ -42,13 +64,25 @@ def app():
     df_analise_clientes_pedido = create_table_analise_clientes_pedido(data_clientes, data_pedidos, data_produtos)
     df_analise_produtos = create_analise_produtos(data_pedidos, data_produtos)
     
-    print(df_analise_clientes_pedido.shape)
-    print(df_analise_produtos.shape)
+    df_analise_clientes_pedido_gold = lakehouse.get_data_from_lakehouse("analise_clientes_pedidos", "gold")
+    df_analise_produtos_gold = lakehouse.get_data_from_lakehouse("analise_produtos", "gold")
+    
+    df_analise_clientes_pedido = remove_duplicates_cliente_pedido(df_analise_clientes_pedido, df_analise_clientes_pedido_gold, "id_cliente")
+    df_analise_produtos = remove_duplicates_cliente_pedido(df_analise_produtos, df_analise_produtos_gold, "id_produto")
+    
+    size_clientes_pedido = df_analise_clientes_pedido.shape[0]
+    size_produtos = df_analise_produtos.shape[0]
+    
+    if size_clientes_pedido == 0 and size_produtos == 0:
+        print("Não há dados novos para inserir na camada Gold.")
+        lakehouse.close_connection()
+        return 
     
     lakehouse.insert_data_to_lakehouse(df_analise_clientes_pedido, "analise_clientes_pedidos", "gold")
     lakehouse.insert_data_to_lakehouse(df_analise_produtos, "analise_produtos", "gold")
     
     lakehouse.close_connection()
+    
     
 if __name__ == "__main__":
     app()

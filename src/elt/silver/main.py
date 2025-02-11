@@ -28,9 +28,6 @@ def remover_duplicates(df_silver, data_parquet_bronze, bronze_columns_id):
     return df_final
 
 def transform_data():
-    """
-    Executa a transformação e inserção na camada Silver, removendo duplicatas.
-    """
     lakehouse = LakehouseConnection()
     
     path_data_clientes = lakehouse.get_data_from_bucket("clientes") 
