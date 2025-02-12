@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from os import getenv, path, remove, makedirs
 from supabase import create_client
-import math
 import pandas as pd 
 from datetime import datetime
 

@@ -1,7 +1,7 @@
-from LakehouseConnection import LakehouseConnection
-from clientes import transform_clients
-from produtos import transform_produtos
-from pedidos import transform_pedidos
+from elt.silver.LakehouseConnection import LakehouseConnection
+from elt.silver.clientes import transform_clients
+from elt.silver.produtos import transform_produtos
+from elt.silver.pedidos import transform_pedidos
 import pandas as pd
 
 def remover_duplicates(df_silver, data_parquet_bronze, bronze_columns_id):
@@ -27,7 +27,7 @@ def remover_duplicates(df_silver, data_parquet_bronze, bronze_columns_id):
     print(f"Registros novos para inserir na Silver ({data_parquet_bronze}): {len(df_final)}")
     return df_final
 
-def transform_data():
+def main():
     lakehouse = LakehouseConnection()
     
     path_data_clientes = lakehouse.get_data_from_bucket("clientes") 
@@ -71,4 +71,4 @@ def transform_data():
     print("✅ Transformação concluída com sucesso!")
 
 if __name__ == "__main__":
-    transform_data()
+    main()

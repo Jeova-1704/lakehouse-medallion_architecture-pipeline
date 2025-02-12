@@ -1,4 +1,4 @@
-from LakehouseConnection import LakehouseConnection
+from elt.gold.LakehouseConnection import LakehouseConnection
 
 
 def create_table_analise_clientes_pedido(df_clientes, df_pedidos, df_produtos):
@@ -55,7 +55,7 @@ def remove_duplicates_cliente_pedido(df, df_gold, column_name):
     
 
 
-def app():
+def main():
     lakehouse = LakehouseConnection()
     data_clientes = lakehouse.get_data_from_lakehouse("clientes", "silver")
     data_produtos = lakehouse.get_data_from_lakehouse("produtos", "silver")
@@ -85,4 +85,4 @@ def app():
     
     
 if __name__ == "__main__":
-    app()
+    main()
