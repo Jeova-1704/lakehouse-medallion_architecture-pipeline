@@ -13,15 +13,30 @@ def run_pipeline():
     print("==========================================================================")
     print("                       executando a camada bronze                         ")
     print("==========================================================================")
-    run_bronze()
+    
+    key_permission_bronze = run_bronze()
+    if key_permission_bronze == 135:
+        print("Execução fora do parazo para inserção dos dados no bonze-storage")
+        return 
+    
     print("==========================================================================")
     print("                       executando a camada silver                         ")
     print("==========================================================================")
-    run_silver()
+    
+    key_permission_silver = run_silver()
+    if key_permission_silver == 357:
+        print("Não existem novos dados para serem tratados e inseridos na camada silver")
+        return 
+    
     print("==========================================================================")
     print("                        executando a camada gold                          ")
     print("==========================================================================")
-    run_gold()
+    
+    key_permission_gold = run_gold()
+    if key_permission_gold == 579:
+        print("Não existem novos dados para serem adicionados na camada gold")
+        return 
+    
     print("==========================================================================")
     print("                          Processo finalizado                             ")
     print("==========================================================================")
@@ -29,15 +44,16 @@ def run_pipeline():
     
 
 if __name__ == "__main__":
-    brt = pytz.timezone("America/Sao_Paulo")
-    scheduler = BlockingScheduler(timezone=brt)
-    
     run_pipeline()
-    scheduler.add_job(run_pipeline, CronTrigger(day=1, hour=2, minute=0, month="*/2", timezone=brt))
+    # brt = pytz.timezone("America/Sao_Paulo")
+    # scheduler = BlockingScheduler(timezone=brt)
     
-    try:
-        scheduler.start()
-    except (KeyboardInterrupt, SystemExit):
-        print("\nInterrompido pelo usuário. Encerrando...")
-        scheduler.shutdown()
-        sys.exit(0)
+    # run_pipeline()
+    # scheduler.add_job(run_pipeline, CronTrigger(day=1, hour=2, minute=0, month="*/2", timezone=brt))
+    
+    # try:
+    #     scheduler.start()
+    # except (KeyboardInterrupt, SystemExit):
+    #     print("\nInterrompido pelo usuário. Encerrando...")
+    #     scheduler.shutdown()
+    #     sys.exit(0)

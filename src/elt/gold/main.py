@@ -76,12 +76,15 @@ def main():
     if size_clientes_pedido == 0 and size_produtos == 0:
         print("Não há dados novos para inserir na camada Gold.")
         lakehouse.close_connection()
-        return 
+        return 579
     
     lakehouse.insert_data_to_lakehouse(df_analise_clientes_pedido, "analise_clientes_pedidos", "gold")
     lakehouse.insert_data_to_lakehouse(df_analise_produtos, "analise_produtos", "gold")
     
     lakehouse.close_connection()
+    
+    print("Camada gold finalizada")
+    return 680
     
     
 if __name__ == "__main__":

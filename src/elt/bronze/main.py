@@ -28,15 +28,12 @@ class Extract:
                     
                 all_data.extend(batch_data)
                 offset += self.batch_size
-
-                print(f"Extraindo dados da tabela {table_name} - {offset} registros extraídos.")
-                
+                                
             except Exception as e:
                 print(f"Erro ao extrair dados da tabela {table_name}")
                 print(e)
                 break
             
-        print(f"Extração de dados da tabela {table_name} finalizada.")
         return all_data
     
     def close_connection(self):
@@ -77,6 +74,14 @@ class LoadToLakehouse():
         
         temp_file_path = f"{temp}/{filename}"
         
+        path_storage = F"{ano}/{mes}"
+        files_storage = self.client.storage.from_(self.bucket_name).list(path_storage)
+        
+        files_storage = [file["name"] for file in files_storage]
+
+        if filename in files_storage:
+            return 135
+        
         try:
             df.to_parquet(temp_file_path, index=False)
             
@@ -96,31 +101,33 @@ class LoadToLakehouse():
             if path.exists(temp_file_path):
                 remove(temp_file_path)
         
+        return 246
+        
         
 def main():
     extract = Extract()
     load = LoadToLakehouse()
     
     data_cliente = extract.get_data("clientes")
-    print("Dados do cliente extraídos com sucesso")
-    print(f"Quantidade de registros: {len(data_cliente)}")
     
     data_produto = extract.get_data("produtos") 
-    print("Dados do produto extraídos com sucesso")
-    print(f"Quantidade de registros: {len(data_produto)}")
     
     data_pedido = extract.get_data("pedidos")
-    print("Dados do pedido extraídos com sucesso")
-    print(f"Quantidade de registros: {len(data_pedido)}")
 
-    load.insert_to_bucket_storage(data_cliente, "clientes")
-    load.insert_to_bucket_storage(data_produto, "produtos")
-    load.insert_to_bucket_storage(data_pedido, "pedidos")
+    key_permission1: int = load.insert_to_bucket_storage(data_cliente, "clientes")
+    key_permission2: int = load.insert_to_bucket_storage(data_produto, "produtos")
+    key_permission3: int = load.insert_to_bucket_storage(data_pedido, "pedidos")
     
     extract.close_connection()
     load.close_connection()
     
-    print("Processo finalizado.")
+    if key_permission1 == key_permission2 == key_permission3 == 135:
+        print("ERRO AO ARMAZENAR OS DADOS NA CAMADA BRONZE. OS ARQUIVOS JÁ EXISTEM OU FOI EXECUTADO FORA DO PRAZO")
+        return 135
+    
+    print("Sucesso na camada bronze")
+    return 246
+    
 
 
 if __name__ == "__main__":

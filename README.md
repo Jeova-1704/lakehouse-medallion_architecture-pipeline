@@ -72,6 +72,18 @@ A Arquitetura Medalhão é um modelo de organização de dados dentro de um Data
 ├── 📄 requirements.txt             → Dependências do projeto
 ```
 
+### Keys -> Chaves para controle de fluxo do pipeline
+| key      | Descrição |
+| :------- | :----: | 
+| 135        | Ocorreu um erro na camada bronze pois não existem dados novos para serem inseridos |
+| 246        | Sucesso na transação de dados na camada bronze e pode seguir em frente |
+| 357        | Não foi possivel inserir os dados na camada silver pois não existem novos dados para tratamento e inserção |
+| 468        | Sucesso na transação de dados na camada bronze e pode seguir em frente |
+| 579        | Não foi possivel inserir os dados na camada gold pois não existem dados novos |
+| 680        | Sucesso na transação dos dados na camada gold |
+
+
+
 ## 📌 1️⃣ Criando a Arquitetura Medalhão no Supabase
 No Supabase, organizamos os dados em três esquemas:
 

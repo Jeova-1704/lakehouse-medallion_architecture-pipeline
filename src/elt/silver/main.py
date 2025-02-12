@@ -51,7 +51,7 @@ def main():
         print("Não há novos dados para inserir na camada Silver.")
         lakehouse.clear_temp(path_data_clientes, path_data_produtos, path_data_pedidos)
         lakehouse.close_connection()
-        return
+        return 357
     
     if size_data_clientes > 0:
         data_clientes = transform_clients(data_clientes)
@@ -69,6 +69,7 @@ def main():
     lakehouse.close_connection()
     
     print("✅ Transformação concluída com sucesso!")
+    return 468
 
 if __name__ == "__main__":
     main()
