@@ -10,7 +10,8 @@ obs: Essa arquitetura é uma representação simplificada do fluxo de dados. A a
 ## Conceitos importantes
 
 ### 📌 Data Lakehouse
-Um Data Lakehouse é uma arquitetura híbrida que combina as melhores características de Data Lakes e Data Warehouses. Ele permite armazenar grandes volumes de dados brutos (como um Data Lake) enquanto oferece governança, qualidade e desempenho para consultas analíticas (como um Data Warehouse).
+Um Data Lakehouse é uma arquitetura híbrida que combina as melhores características de Data Lakes e Data Warehouses. Ele permite armazenar grandes volumes de dados brutos (como um Data Lake) enquanto oferece governança, qualidade e desempenho para consultas analíticas (como um Data Warehouse). Os dados validados e a pipeline funciona a cada 2 meses, garantinando a extração continua dos dados, além de que todo o sistema é validado para garantir a integrade das camadas e não inserir dados repetidos e acabar duplicando os dados do banco.
+
 #### Principais Características:
 - Armazena dados estruturados e não estruturados em um único local.
 - Suporta processamento de grandes volumes de dados com baixo custo.
