@@ -249,6 +249,7 @@ pip install -r requirements.txt
 # Databse destination
 LAKEHOUSE_URL="adicione a url do supabase aqui"
 LAKEHOUSE_KEY="adicione a chave do supabase aqui"
+BUCKET_NAME="bronze-bucket"
 
 # Database origin
 SUPABASE_URL="adicione a url do supabase de onde os dados serão extraídos"
@@ -256,7 +257,8 @@ SUPABASE_KEY="adicione a chave do supabase de onde os dados serão extraídos"
 ```
 4️⃣ Execute o projeto da da pipeline elt completa (bronze, silver, gold):
 ```bash
-python src/app.py
+docker-compose build
+docker-compose up -d
 ```
 
 #### 📌 7️⃣ Conclusão
@@ -265,12 +267,13 @@ Este projeto implementa um Lakehouse gratuito usando Supabase e Arquitetura Meda
 ✅ Criamos as Camadas Bronze, Silver e Gold.
 ✅ Transformamos e estruturamos os dados.
 ✅ Agora os dados estão prontos para análise! 🚀🔥
+✅ Criar um Pipeline de Dados.
+
 
 
 #### 📌 8️⃣ Próximos Passos
 ✅ Finalizamos a Arquitetura Medalhão com sucesso! 🎉
 🚀 Agora podemos avançar para novos desafios:
 
-1️⃣ Criar um Pipeline de Dados.
-2️⃣ Criar um Dashboard para análise dos dados.
-3️⃣ Criar uma API para disponibilizar os dados.
+1️⃣ Criar um Dashboard para análise dos dados.
+2️⃣ Criar uma API para disponibilizar os dados.
