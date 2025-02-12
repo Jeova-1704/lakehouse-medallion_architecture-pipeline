@@ -3,7 +3,7 @@ Este projeto implementa um Data Lakehouse utilizando o Supabase como banco de da
 
 ## Arquitetrua/Fluxo de Dados até o momento 
 
-![Arquitetura do projeto](images-readme/{AC48F041-C5B7-480D-BE44-3FFFCEAB4639}.png)
+![Arquitetura do projeto](images-readme/{913C027E-A945-4232-BF1A-0DEFCCB9858D}.png)
 
 obs: Essa arquitetura é uma representação simplificada do fluxo de dados. A arquitetura final do projeto ainda está em desenvolvimento a medida que novas funcionalidades são implementadas no projeto.
 
