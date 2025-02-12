@@ -41,8 +41,3 @@ if __name__ == "__main__":
         print("\nInterrompido pelo usuário. Encerrando...")
         scheduler.shutdown()
         sys.exit(0)
-
-
-
-
-
