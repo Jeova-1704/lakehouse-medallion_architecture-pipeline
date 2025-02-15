@@ -286,7 +286,4 @@ Este projeto implementa um Lakehouse gratuito usando Supabase e Arquitetura Meda
 
 #### 📌 8️⃣ Próximos Passos
 ✅ Finalizamos a Arquitetura Medalhão com sucesso! 🎉
-🚀 Agora podemos avançar para novos desafios:
-
-1️⃣ Criar um Dashboard para análise dos dados.
-2️⃣ Criar uma API para disponibilizar os dados.
+✅ Criar uma API para disponibilizar os dados. (https://github.com/Jeova-1704/api_data_sales_lakehouse)
